@@ -18,10 +18,14 @@ S = "${WORKDIR}/git/server"
 
 # TODO: Add the aesdsocket application and any other files you need to install
 # See https://git.yoctoproject.org/poky/plain/meta/conf/bitbake.conf?h=kirkstone
-#FILES:${PN} += "${bindir}/aesdsocket"
+FILES:${PN} += "${bindir}/aesdsocket"
 # TODO: customize these as necessary for any libraries you need for your application
 # (and remove comment)
-#TARGET_LDFLAGS += "-pthread -lrt"
+TARGET_LDFLAGS += "-pthread -lrt"
+
+export CROSS_COMPILE = "${TARGET_PREFIX}"
+EXTRA_OEMAKE = "CC='${CC}' LDFLAGS='${TARGET_LDFLAGS}'"
+
 
 do_configure () {
 	:

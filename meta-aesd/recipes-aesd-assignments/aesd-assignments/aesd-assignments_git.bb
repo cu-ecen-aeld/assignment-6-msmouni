@@ -26,6 +26,15 @@ TARGET_LDFLAGS += "-pthread -lrt"
 export CROSS_COMPILE = "${TARGET_PREFIX}"
 EXTRA_OEMAKE = "CC='${CC}' LDFLAGS='${TARGET_LDFLAGS}'"
 
+INITSCRIPT_PACKAGES = "${PN}"
+# This specifies the name of the init script 
+INITSCRIPT_NAME = "aesdsocket-d"
+
+# The defaults 99 part tells the system to start the service with a priority of 99. The defaults parameter tells update-rc.d to create the start (S) and stop (K) symlinks for runlevels 2, 3, 4, and 5
+INITSCRIPT_PARAMS = "defaults 99"
+
+# Add the init script to be managed by SysVinit during the correct runlevel
+inherit update-rc.d
 
 do_configure () {
 	:
@@ -47,3 +56,8 @@ do_install () {
 	# Install the aesdsocket binary in /usr/bin (${bindir} is a Yocto variable that refers to /usr/bin)
 	install -d ${D}${bindir}
     install -m 0755 ${S}/aesdsocket ${D}${bindir}/
+
+	# The init script is placed in /etc/init.d using the ${sysconfdir}/init.d path (Yocto's ${sysconfdir} typically points to /etc).
+    install -d ${D}${sysconfdir}/init.d/
+	install -m 0755 ${S}/aesdsocket-start-stop ${D}${sysconfdir}/init.d/aesdsocket-d
+}
